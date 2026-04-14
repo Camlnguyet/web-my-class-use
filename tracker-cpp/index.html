@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C++ Journey — Lộ trình học lập trình</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0d14;
+    --surface: #13131f;
+    --surface2: #1a1a2a;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.13);
+    --text: #e8e8f0;
+    --muted: #6b6b8a;
+    --accent-purple: #7f77dd;
+    --accent-teal: #1d9e75;
+    --accent-amber: #ef9f27;
+    --accent-coral: #d85a30;
+    --accent-blue: #378add;
+    --purple-bg: rgba(127,119,221,0.12);
+    --teal-bg: rgba(29,158,117,0.12);
+    --amber-bg: rgba(239,159,39,0.12);
+    --coral-bg: rgba(216,90,48,0.12);
+    --mono: 'Space Mono', monospace;
+    --sans: 'Sora', sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(13,13,20,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    height: 56px;
+  }
+  .nav-logo {
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--accent-purple);
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+  }
+  .nav-logo span { color: var(--muted); }
+  .nav-tabs {
+    display: flex;
+    gap: 4px;
+    flex: 1;
+  }
+  .nav-tab {
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--muted);
+    background: none;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .nav-tab:hover { color: var(--text); background: var(--surface2); }
+  .nav-tab.active { color: var(--text); background: var(--surface2); font-weight: 500; }
+  .progress-pill {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent-teal);
+    background: var(--teal-bg);
+    padding: 4px 10px;
+    border-radius: 99px;
+    border: 1px solid rgba(29,158,117,0.25);
+    white-space: nowrap;
+  }
+
+  /* PAGES */
+  .page { display: none; padding: 2rem; max-width: 900px; margin: 0 auto; }
+  .page.active { display: block; }
+
+  /* HERO */
+  .hero {
+    padding: 3rem 0 2rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 2rem;
+  }
+  .hero-eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent-purple);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .hero h1 {
+    font-size: clamp(28px, 5vw, 42px);
+    font-weight: 600;
+    line-height: 1.2;
+    margin-bottom: 12px;
+  }
+  .hero h1 em {
+    font-style: normal;
+    color: var(--accent-purple);
+  }
+  .hero p {
+    font-size: 15px;
+    color: var(--muted);
+    max-width: 540px;
+  }
+
+  /* STATS ROW */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 2rem;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .stat-label { font-size: 11px; color: var(--muted); margin-bottom: 4px; font-family: var(--mono); }
+  .stat-value { font-size: 22px; font-weight: 600; font-family: var(--mono); }
+  .stat-value.purple { color: var(--accent-purple); }
+  .stat-value.teal { color: var(--accent-teal); }
+  .stat-value.amber { color: var(--accent-amber); }
+  .stat-value.coral { color: var(--accent-coral); }
+
+  /* SECTION */
+  .section { margin-bottom: 2rem; }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .section-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .section-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+    font-family: var(--mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* STAGE */
+  .stage {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .stage:hover { border-color: var(--border2); }
+  .stage-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .stage-badge {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    letter-spacing: 0.05em;
+  }
+  .badge-p { background: var(--purple-bg); color: var(--accent-purple); border: 1px solid rgba(127,119,221,0.25); }
+  .badge-t { background: var(--teal-bg); color: var(--accent-teal); border: 1px solid rgba(29,158,117,0.25); }
+  .badge-a { background: var(--amber-bg); color: var(--accent-amber); border: 1px solid rgba(239,159,39,0.25); }
+  .badge-c { background: var(--coral-bg); color: var(--accent-coral); border: 1px solid rgba(216,90,48,0.25); }
+  .badge-b { background: rgba(55,138,221,0.12); color: var(--accent-blue); border: 1px solid rgba(55,138,221,0.25); }
+
+  .stage-title-text { font-size: 14px; font-weight: 500; flex: 1; }
+  .stage-progress-wrap { display: flex; align-items: center; gap: 8px; }
+  .stage-pct { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+  .stage-bar {
+    width: 60px;
+    height: 3px;
+    background: var(--border2);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .stage-bar-fill {
+    height: 100%;
+    border-radius: 99px;
+    background: var(--accent-purple);
+    transition: width 0.3s;
+  }
+  .chevron { font-size: 10px; color: var(--muted); transition: transform 0.2s; }
+  .stage.open .chevron { transform: rotate(90deg); }
+
+  .stage-body { display: none; border-top: 1px solid var(--border); padding: 4px 0 8px; }
+  .stage.open .stage-body { display: block; }
+
+  /* TOPIC ITEM */
+  .topic-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 16px;
+    border-radius: 6px;
+    margin: 2px 8px;
+    transition: background 0.15s;
+    cursor: pointer;
+  }
+  .topic-item:hover { background: var(--surface2); }
+  .topic-check {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    border: 1.5px solid var(--border2);
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+  .topic-check.checked {
+    background: var(--accent-teal);
+    border-color: var(--accent-teal);
+  }
+  .topic-check.checked::after {
+    content: '';
+    width: 10px;
+    height: 6px;
+    border-left: 1.5px solid #fff;
+    border-bottom: 1.5px solid #fff;
+    transform: rotate(-45deg) translateY(-1px);
+    display: block;
+  }
+  .topic-content { flex: 1; }
+  .topic-name {
+    font-size: 13px;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+  .topic-name.done { color: var(--muted); text-decoration: line-through; }
+  .topic-sub {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+    font-family: var(--mono);
+  }
+  .topic-tag {
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-family: var(--mono);
+    margin-top: 4px;
+    display: inline-block;
+  }
+  .tag-hard { background: rgba(216,90,48,0.15); color: var(--accent-coral); }
+  .tag-key  { background: rgba(55,138,221,0.12); color: var(--accent-blue); }
+  .tag-opt  { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); }
+
+  /* CODEFORCES */
+  .week-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+  .week-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    cursor: pointer;
+    border-bottom: 1px solid transparent;
+    transition: all 0.2s;
+  }
+  .week-card.open .week-header { border-bottom-color: var(--border); }
+  .week-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    width: 52px;
+    flex-shrink: 0;
+  }
+  .week-title-text { font-size: 14px; font-weight: 500; flex: 1; }
+  .week-solved {
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: var(--surface2);
+    color: var(--muted);
+  }
+  .week-solved.all { background: var(--teal-bg); color: var(--accent-teal); }
+
+  .week-body { display: none; padding: 8px; }
+  .week-card.open .week-body { display: block; }
+
+  .problem-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 6px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    transition: border-color 0.2s;
+    cursor: pointer;
+  }
+  .problem-item:hover { border-color: var(--border2); }
+  .problem-item.solved { opacity: 0.6; }
+  .problem-check {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    border: 1.5px solid var(--border2);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+  .problem-check.checked {
+    background: var(--accent-teal);
+    border-color: var(--accent-teal);
+  }
+  .problem-check.checked::after {
+    content: '';
+    width: 10px;
+    height: 6px;
+    border-left: 1.5px solid #fff;
+    border-bottom: 1.5px solid #fff;
+    transform: rotate(-45deg) translateY(-1px);
+    display: block;
+  }
+  .problem-body { flex: 1; }
+  .problem-name { font-size: 13px; font-weight: 500; }
+  .problem-name.done { text-decoration: line-through; color: var(--muted); }
+  .problem-meta {
+    display: flex;
+    gap: 8px;
+    margin-top: 5px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .diff-badge {
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 4px;
+  }
+  .diff-A { background: var(--teal-bg); color: var(--accent-teal); }
+  .diff-B { background: var(--purple-bg); color: var(--accent-purple); }
+  .diff-C { background: var(--amber-bg); color: var(--accent-amber); }
+  .problem-link {
+    font-size: 11px;
+    color: var(--accent-blue);
+    text-decoration: none;
+    font-family: var(--mono);
+    opacity: 0.7;
+  }
+  .problem-link:hover { opacity: 1; }
+  .problem-tip {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+    font-style: italic;
+  }
+
+  /* PROGRESS OVERVIEW */
+  .progress-overview {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 1.5rem;
+  }
+  .ov-title { font-size: 12px; color: var(--muted); font-family: var(--mono); margin-bottom: 16px; letter-spacing: 0.08em; text-transform: uppercase; }
+  .ov-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .ov-item {}
+  .ov-label { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+  .ov-bar-wrap { display: flex; align-items: center; gap: 10px; }
+  .ov-bar {
+    flex: 1;
+    height: 6px;
+    background: var(--surface2);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .ov-bar-fill {
+    height: 100%;
+    border-radius: 99px;
+    transition: width 0.4s;
+  }
+  .ov-pct { font-family: var(--mono); font-size: 12px; font-weight: 700; min-width: 36px; text-align: right; }
+
+  /* DAILY */
+  .daily-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-bottom: 2rem; }
+  .daily-cell {
+    aspect-ratio: 1;
+    border-radius: 4px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .daily-cell:hover { border-color: var(--border2); }
+  .daily-cell.active { background: var(--accent-teal); border-color: var(--accent-teal); }
+  .daily-cell.today { border-color: var(--accent-purple); }
+  .day-label { font-family: var(--mono); font-size: 9px; color: var(--muted); text-align: center; }
+
+  /* SCROLL ANIMATION */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .fadein { animation: fadeUp 0.4s ease both; }
+  .fadein:nth-child(1) { animation-delay: 0.05s; }
+  .fadein:nth-child(2) { animation-delay: 0.10s; }
+  .fadein:nth-child(3) { animation-delay: 0.15s; }
+  .fadein:nth-child(4) { animation-delay: 0.20s; }
+  .fadein:nth-child(5) { animation-delay: 0.25s; }
+
+  /* STREAKS */
+  .streak-banner {
+    background: linear-gradient(90deg, rgba(29,158,117,0.15), transparent);
+    border: 1px solid rgba(29,158,117,0.2);
+    border-radius: 10px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 1.5rem;
+  }
+  .streak-icon { font-size: 20px; }
+  .streak-text { font-size: 13px; }
+  .streak-text strong { color: var(--accent-teal); }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    nav { padding: 0 1rem; gap: 1rem; }
+    .page { padding: 1.25rem; }
+    .stats-row { grid-template-columns: 1fr 1fr; }
+    .ov-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">C<span>++</span>journey</div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showPage('home')">Tổng quan</button>
+    <button class="nav-tab" onclick="showPage('cpp')">Lộ trình C++</button>
+    <button class="nav-tab" onclick="showPage('cf')">Codeforces</button>
+  </div>
+  <div class="progress-pill" id="nav-progress">0 / 0 done</div>
+</nav>
+
+<!-- HOME -->
+<div class="page active" id="page-home">
+  <div class="hero fadein">
+    <div class="hero-eyebrow">Lộ trình học lập trình</div>
+    <h1>Từ <em>Python</em> đến<br>C++ & Codeforces</h1>
+    <p>Theo dõi tiến độ học C++ và luyện bài Codeforces mỗi tuần. Check-in từng bước để không bỏ sót.</p>
+  </div>
+
+  <div class="stats-row fadein">
+    <div class="stat-card">
+      <div class="stat-label">C++ Topics</div>
+      <div class="stat-value purple" id="stat-cpp-done">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">CF bài đã giải</div>
+      <div class="stat-value teal" id="stat-cf-done">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Tổng điểm</div>
+      <div class="stat-value amber" id="stat-score">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Streak</div>
+      <div class="stat-value coral" id="stat-streak">0</div>
+    </div>
+  </div>
+
+  <div class="streak-banner fadein">
+    <div class="streak-icon">★</div>
+    <div class="streak-text">
+      Mỗi ngày học <strong>một chút</strong> — đánh dấu ngày hôm nay để giữ streak nhé!
+    </div>
+    <button style="margin-left:auto; font-family:var(--mono); font-size:11px; background:rgba(29,158,117,0.2); color:var(--accent-teal); border:1px solid rgba(29,158,117,0.3); border-radius:6px; padding:6px 14px; cursor:pointer;" onclick="checkToday()">Check-in hôm nay</button>
+  </div>
+
+  <div class="section fadein">
+    <div class="section-header">
+      <div class="section-dot" style="background:var(--accent-teal)"></div>
+      <div class="section-title">Điểm danh — 4 tuần</div>
+    </div>
+    <div style="display:flex; gap:6px; margin-bottom:8px; flex-wrap:wrap;">
+      <span style="font-size:11px;color:var(--muted);font-family:var(--mono)">T2</span>
+      <span style="font-size:11px;color:var(--muted);font-family:var(--mono)">T3</span>
+      <span style="font-size:11px;color:var(--muted);font-family:var(--mono)">T4</span>
+      <span style="font-size:11px;color:var(--muted);font-family:var(--mono)">T5</span>
+      <span style="font-size:11px;color:var(--muted);font-family:var(--mono)">T6</span>
+      <span style="font-size:11px;color:var(--muted);font-family:var(--mono)">T7</span>
+      <span style="font-size:11px;color:var(--muted);font-family:var(--mono)">CN</span>
+    </div>
+    <div class="daily-grid" id="daily-grid"></div>
+  </div>
+
+  <div class="section fadein">
+    <div class="section-header">
+      <div class="section-dot" style="background:var(--accent-purple)"></div>
+      <div class="section-title">Tiến độ tổng</div>
+    </div>
+    <div class="progress-overview">
+      <div class="ov-title">Overview</div>
+      <div class="ov-grid">
+        <div class="ov-item">
+          <div class="ov-label">C++ — Cú pháp & hàm</div>
+          <div class="ov-bar-wrap">
+            <div class="ov-bar"><div class="ov-bar-fill" id="ov-s1" style="background:var(--accent-purple);width:0%"></div></div>
+            <div class="ov-pct purple" id="ov-s1-pct" style="color:var(--accent-purple)">0%</div>
+          </div>
+        </div>
+        <div class="ov-item">
+          <div class="ov-label">C++ — Con trỏ & OOP</div>
+          <div class="ov-bar-wrap">
+            <div class="ov-bar"><div class="ov-bar-fill" id="ov-s2" style="background:var(--accent-teal);width:0%"></div></div>
+            <div class="ov-pct" id="ov-s2-pct" style="color:var(--accent-teal)">0%</div>
+          </div>
+        </div>
+        <div class="ov-item">
+          <div class="ov-label">C++ — STL & nâng cao</div>
+          <div class="ov-bar-wrap">
+            <div class="ov-bar"><div class="ov-bar-fill" id="ov-s3" style="background:var(--accent-amber);width:0%"></div></div>
+            <div class="ov-pct" id="ov-s3-pct" style="color:var(--accent-amber)">0%</div>
+          </div>
+        </div>
+        <div class="ov-item">
+          <div class="ov-label">Codeforces</div>
+          <div class="ov-bar-wrap">
+            <div class="ov-bar"><div class="ov-bar-fill" id="ov-cf" style="background:var(--accent-blue);width:0%"></div></div>
+            <div class="ov-pct" id="ov-cf-pct" style="color:var(--accent-blue)">0%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- C++ PAGE -->
+<div class="page" id="page-cpp">
+  <div class="hero fadein">
+    <div class="hero-eyebrow">Giai đoạn 1 → 4</div>
+    <h1>Lộ trình <em>C++</em></h1>
+    <p>Dành cho người đã biết Python. Check vào ô checkbox sau khi hoàn thành mỗi chủ đề.</p>
+  </div>
+
+  <div id="cpp-stages"></div>
+</div>
+
+<!-- CF PAGE -->
+<div class="page" id="page-cf">
+  <div class="hero fadein">
+    <div class="hero-eyebrow">8 tuần luyện đề</div>
+    <h1>Lộ trình <em>Codeforces</em></h1>
+    <p>2–3 bài mỗi tuần. Bắt đầu từ Div.2 A/B, tăng dần độ khó theo tuần.</p>
+  </div>
+  <div id="cf-weeks"></div>
+</div>
+
+<script>
+const STORAGE_KEY = 'cpp_journey_v2';
+
+const cppStages = [
+  {
+    id: 's1', badge: 'badge-p', label: 'Giai đoạn 1', title: 'Cú pháp cơ bản — làm quen C++', group: 1,
+    topics: [
+      { id: 't1', name: 'Cấu trúc chương trình — hàm main()', sub: 'Python không có main, C++ bắt buộc' },
+      { id: 't2', name: 'Kiểu dữ liệu: int, float, double, char, bool', sub: 'Python tự đoán kiểu — C++ phải khai báo' },
+      { id: 't3', name: 'Nhập / Xuất với cin và cout', sub: 'Tương đương input() / print()' },
+      { id: 't4', name: 'Biến, hằng const, toán tử cơ bản', sub: 'Phải khai báo trước khi dùng' },
+      { id: 't5', name: 'Câu lệnh điều kiện if / else if / else', sub: 'Giống Python, chỉ khác dấu ngoặc {}', tag: null },
+      { id: 't6', name: 'Vòng lặp for, while, do-while', sub: 'Python chỉ có for/while — C++ thêm do-while' },
+    ]
+  },
+  {
+    id: 's2', badge: 'badge-p', label: 'Giai đoạn 1 (tt)', title: 'Mảng, chuỗi và hàm', group: 1,
+    topics: [
+      { id: 't7', name: 'Mảng tĩnh — int arr[n]', sub: 'Kích thước cố định, khác list Python' },
+      { id: 't8', name: 'Chuỗi: string và char[]', sub: 'str Python tương đương string C++' },
+      { id: 't9', name: 'Hàm — khai báo, định nghĩa, gọi hàm', sub: 'Python dùng def — C++ cần khai báo kiểu trả về' },
+      { id: 't10', name: 'Truyền tham số: by value vs by reference &', sub: 'Python truyền reference mặc định với object', tag: 'key' },
+    ]
+  },
+  {
+    id: 's3', badge: 'badge-t', label: 'Giai đoạn 2', title: 'Con trỏ & quản lý bộ nhớ', group: 2,
+    topics: [
+      { id: 't11', name: 'Con trỏ *ptr — địa chỉ bộ nhớ', sub: 'Python không có khái niệm này', tag: 'hard' },
+      { id: 't12', name: 'Con trỏ và mảng, con trỏ hàm', sub: 'Thao tác với địa chỉ vùng nhớ' },
+      { id: 't13', name: 'Cấp phát động: new / delete', sub: 'Python tự quản lý — C++ giải phóng thủ công', tag: 'key' },
+    ]
+  },
+  {
+    id: 's4', badge: 'badge-t', label: 'Giai đoạn 2 (tt)', title: 'Lập trình hướng đối tượng (OOP)', group: 2,
+    topics: [
+      { id: 't14', name: 'struct và class', sub: 'Python cũng có class — khái niệm quen thuộc' },
+      { id: 't15', name: 'Constructor / Destructor', sub: 'Tương đương __init__ và __del__' },
+      { id: 't16', name: 'Encapsulation: public, private, protected', sub: 'Python dùng quy ước _tên — C++ enforce thật' },
+      { id: 't17', name: 'Kế thừa và đa hình', sub: 'Inheritance & Polymorphism — cú pháp khác Python' },
+      { id: 't18', name: 'Hàm ảo virtual, lớp abstract', sub: 'Python dùng ABC module', tag: 'hard' },
+    ]
+  },
+  {
+    id: 's5', badge: 'badge-a', label: 'Giai đoạn 3', title: 'STL — Thư viện chuẩn', group: 3,
+    topics: [
+      { id: 't19', name: 'vector — mảng động', sub: 'Tương đương list Python' },
+      { id: 't20', name: 'map / unordered_map', sub: 'Tương đương dict Python' },
+      { id: 't21', name: 'set, stack, queue', sub: 'Python có set, deque — STL đầy đủ hơn' },
+      { id: 't22', name: 'Iterators và algorithm: sort, find, count…', sub: 'Tương đương các hàm built-in Python' },
+    ]
+  },
+  {
+    id: 's6', badge: 'badge-a', label: 'Giai đoạn 3 (tt)', title: 'Template & xử lý ngoại lệ', group: 3,
+    topics: [
+      { id: 't23', name: 'Function template & class template', sub: 'Python tự động generic — C++ cần khai báo template' },
+      { id: 't24', name: 'Xử lý ngoại lệ: try / catch / throw', sub: 'Tương đương try / except / raise' },
+    ]
+  },
+  {
+    id: 's7', badge: 'badge-c', label: 'Giai đoạn 4', title: 'File I/O & dự án thực chiến', group: 4,
+    topics: [
+      { id: 't25', name: 'Đọc / ghi file với fstream', sub: 'Tương đương open() Python' },
+      { id: 't26', name: 'Mini project tổng hợp', sub: 'Quản lý danh sách, game đoán số…' },
+      { id: 't27', name: 'C++11/14/17 features hiện đại', sub: 'auto, lambda, range-based for loop', tag: 'opt' },
+    ]
+  },
+];
+
+const cfWeeks = [
+  {
+    id: 'w1', week: 'Tuần 1', title: 'Làm quen Codeforces — Input/Output thuần',
+    problems: [
+      { id: 'p1', name: 'A. Watermelon', diff: 'A', link: 'https://codeforces.com/problemset/problem/4/A', tip: 'Bài đầu tiên kinh điển — kiểm tra số chẵn chia đôi' },
+      { id: 'p2', name: 'A. Way Too Long Words', diff: 'A', link: 'https://codeforces.com/problemset/problem/71/A', tip: 'Xử lý chuỗi cơ bản' },
+      { id: 'p3', name: 'A. Football Kit', diff: 'A', link: 'https://codeforces.com/problemset/problem/1570/A', tip: 'Đếm và map' },
+    ]
+  },
+  {
+    id: 'w2', week: 'Tuần 2', title: 'Vòng lặp & điều kiện',
+    problems: [
+      { id: 'p4', name: 'A. Bear and Prime 100', diff: 'A', link: 'https://codeforces.com/problemset/problem/660/A', tip: 'Tư duy số nguyên tố đơn giản' },
+      { id: 'p5', name: 'A. Next Round', diff: 'A', link: 'https://codeforces.com/problemset/problem/586/A', tip: 'Đọc đề kỹ — bẫy điều kiện' },
+      { id: 'p6', name: 'B. Vasya and Triangle', diff: 'B', link: 'https://codeforces.com/problemset/problem/1176/B', tip: 'Toán học cơ bản, chia đôi' },
+    ]
+  },
+  {
+    id: 'w3', week: 'Tuần 3', title: 'Mảng & tìm kiếm tuyến tính',
+    problems: [
+      { id: 'p7', name: 'A. Black Square', diff: 'A', link: 'https://codeforces.com/problemset/problem/431/A', tip: 'Đếm và suy luận đơn giản' },
+      { id: 'p8', name: 'B. Minesweeper', diff: 'B', link: 'https://codeforces.com/problemset/problem/275/B', tip: 'Xử lý mảng 2D' },
+      { id: 'p9', name: 'A. Generous Kefa', diff: 'A', link: 'https://codeforces.com/problemset/problem/580/A', tip: 'Duyệt chuỗi với điều kiện' },
+    ]
+  },
+  {
+    id: 'w4', week: 'Tuần 4', title: 'Sắp xếp & map/set',
+    problems: [
+      { id: 'p10', name: 'A. Nearly Lucky Number', diff: 'A', link: 'https://codeforces.com/problemset/problem/121/A', tip: 'Đếm ký tự trong chuỗi' },
+      { id: 'p11', name: 'B. Pashmak and Garden', diff: 'B', link: 'https://codeforces.com/problemset/problem/459/B', tip: 'Toán hình học + sort' },
+      { id: 'p12', name: 'B. Vanya and Table', diff: 'B', link: 'https://codeforces.com/problemset/problem/722/B', tip: 'XOR — tư duy bit' },
+    ]
+  },
+  {
+    id: 'w5', week: 'Tuần 5', title: 'Two pointers & Greedy',
+    problems: [
+      { id: 'p13', name: 'B. Vika and the Bridge', diff: 'B', link: 'https://codeforces.com/problemset/problem/1848/B', tip: 'Tư duy greedy cơ bản' },
+      { id: 'p14', name: 'B. Polycarp and the Two Sides', diff: 'B', link: 'https://codeforces.com/problemset/problem/1bài', tip: 'Greedy với mảng' },
+      { id: 'p15', name: 'C. Closest Equals', diff: 'C', link: 'https://codeforces.com/problemset/problem/558/C', tip: 'Thử thách đầu tiên mức C' },
+    ]
+  },
+  {
+    id: 'w6', week: 'Tuần 6', title: 'Prefix sum & Binary search',
+    problems: [
+      { id: 'p16', name: 'B. Maximum Sum of Digits', diff: 'B', link: 'https://codeforces.com/problemset/problem/1217/B', tip: 'Prefix sum tư duy' },
+      { id: 'p17', name: 'B. Vanya and Lanterns', diff: 'B', link: 'https://codeforces.com/problemset/problem/492/B', tip: 'Sắp xếp + tính toán' },
+      { id: 'p18', name: 'C. Frog Trips', diff: 'C', link: 'https://codeforces.com/problemset/problem/C', tip: 'Binary search ứng dụng' },
+    ]
+  },
+  {
+    id: 'w7', week: 'Tuần 7', title: 'Đồ thị cơ bản — BFS/DFS',
+    problems: [
+      { id: 'p19', name: 'B. Ilya and Escalator', diff: 'B', link: 'https://codeforces.com/problemset/problem/512/B', tip: 'DP xác suất nhỏ' },
+      { id: 'p20', name: 'B. BFS on Tree', diff: 'B', link: 'https://codeforces.com/problemset/problem/tree', tip: 'BFS/DFS trên cây' },
+      { id: 'p21', name: 'C. Dijkstra Walk', diff: 'C', link: 'https://codeforces.com/problemset/problem/dijk', tip: 'Đồ thị trọng số đơn giản' },
+    ]
+  },
+  {
+    id: 'w8', week: 'Tuần 8', title: 'DP nhập môn — tổng kết',
+    problems: [
+      { id: 'p22', name: 'A. Knapsack — Easy', diff: 'B', link: 'https://codeforces.com/problemset/problem/1203/C', tip: 'DP balo bước đầu' },
+      { id: 'p23', name: 'B. Tổng kết tuần & virtual contest', diff: 'C', link: 'https://codeforces.com/contests', tip: 'Tham gia 1 virtual contest Div.2' },
+    ]
+  },
+];
+
+let state = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{"topics":{},"problems":{},"days":{}}');
+if (!state.topics) state.topics = {};
+if (!state.problems) state.problems = {};
+if (!state.days) state.days = {};
+
+function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  event.target.classList.add('active');
+  updateAll();
+}
+
+function toggle(id, type) {
+  if (type === 'topic') {
+    state.topics[id] = !state.topics[id];
+  } else {
+    state.problems[id] = !state.problems[id];
+  }
+  save();
+  updateAll();
+  renderCpp();
+  renderCf();
+}
+
+function toggleStage(el) {
+  el.closest('.stage, .week-card').classList.toggle('open');
+}
+
+function checkToday() {
+  const today = new Date().toISOString().slice(0, 10);
+  state.days[today] = true;
+  save();
+  renderDailyGrid();
+  updateAll();
+}
+
+function getStreak() {
+  let streak = 0;
+  const d = new Date();
+  while (true) {
+    const key = d.toISOString().slice(0, 10);
+    if (state.days[key]) { streak++; d.setDate(d.getDate() - 1); }
+    else break;
+  }
+  return streak;
+}
+
+function renderDailyGrid() {
+  const grid = document.getElementById('daily-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  const today = new Date();
+  const todayKey = today.toISOString().slice(0, 10);
+  for (let i = 27; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    const key = d.toISOString().slice(0, 10);
+    const cell = document.createElement('div');
+    cell.className = 'daily-cell' + (state.days[key] ? ' active' : '') + (key === todayKey ? ' today' : '');
+    cell.title = key;
+    cell.onclick = () => {
+      state.days[key] = !state.days[key];
+      save();
+      renderDailyGrid();
+      updateAll();
+    };
+    grid.appendChild(cell);
+  }
+}
+
+function renderCpp() {
+  const container = document.getElementById('cpp-stages');
+  if (!container) return;
+  container.innerHTML = '';
+  cppStages.forEach(stage => {
+    const checked = stage.topics.filter(t => state.topics[t.id]).length;
+    const total = stage.topics.length;
+    const pct = total ? Math.round(checked / total * 100) : 0;
+    const el = document.createElement('div');
+    el.className = 'stage fadein';
+    el.id = 'stage-' + stage.id;
+    el.innerHTML = `
+      <div class="stage-header" onclick="toggleStage(this)">
+        <span class="stage-badge ${stage.badge}">${stage.label}</span>
+        <span class="stage-title-text">${stage.title}</span>
+        <div class="stage-progress-wrap">
+          <span class="stage-pct">${checked}/${total}</span>
+          <div class="stage-bar"><div class="stage-bar-fill" style="width:${pct}%"></div></div>
+        </div>
+        <span class="chevron">▶</span>
+      </div>
+      <div class="stage-body">
+        ${stage.topics.map(t => `
+          <div class="topic-item" onclick="toggle('${t.id}','topic')">
+            <div class="topic-check ${state.topics[t.id] ? 'checked' : ''}"></div>
+            <div class="topic-content">
+              <div class="topic-name ${state.topics[t.id] ? 'done' : ''}">${t.name}</div>
+              <div class="topic-sub">${t.sub}</div>
+              ${t.tag === 'hard' ? '<span class="topic-tag tag-hard">khó</span>' : t.tag === 'key' ? '<span class="topic-tag tag-key">quan trọng</span>' : t.tag === 'opt' ? '<span class="topic-tag tag-opt">tùy chọn</span>' : ''}
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+    container.appendChild(el);
+  });
+}
+
+function renderCf() {
+  const container = document.getElementById('cf-weeks');
+  if (!container) return;
+  container.innerHTML = '';
+  cfWeeks.forEach(week => {
+    const solved = week.problems.filter(p => state.problems[p.id]).length;
+    const total = week.problems.length;
+    const el = document.createElement('div');
+    el.className = 'week-card fadein';
+    el.innerHTML = `
+      <div class="week-header" onclick="this.closest('.week-card').classList.toggle('open')">
+        <span class="week-num">${week.week}</span>
+        <span class="week-title-text">${week.title}</span>
+        <span class="week-solved ${solved === total ? 'all' : ''}">${solved}/${total} solved</span>
+        <span class="chevron" style="font-size:10px;color:var(--muted);margin-left:6px;">▶</span>
+      </div>
+      <div class="week-body">
+        ${week.problems.map(p => `
+          <div class="problem-item ${state.problems[p.id] ? 'solved' : ''}" onclick="toggle('${p.id}','problem')">
+            <div class="problem-check ${state.problems[p.id] ? 'checked' : ''}"></div>
+            <div class="problem-body">
+              <div class="problem-name ${state.problems[p.id] ? 'done' : ''}">${p.name}</div>
+              <div class="problem-meta">
+                <span class="diff-badge diff-${p.diff}">Div.2 ${p.diff}</span>
+                <a class="problem-link" href="${p.link}" target="_blank" onclick="event.stopPropagation()">codeforces →</a>
+              </div>
+              <div class="problem-tip">${p.tip}</div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+    container.appendChild(el);
+  });
+}
+
+function updateAll() {
+  const allTopics = cppStages.flatMap(s => s.topics);
+  const cppDone = allTopics.filter(t => state.topics[t.id]).length;
+  const allProblems = cfWeeks.flatMap(w => w.problems);
+  const cfDone = allProblems.filter(p => state.problems[p.id]).length;
+  const score = cppDone * 10 + cfDone * 25;
+  const streak = getStreak();
+
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  set('stat-cpp-done', cppDone + ' / ' + allTopics.length);
+  set('stat-cf-done', cfDone + ' / ' + allProblems.length);
+  set('stat-score', score);
+  set('stat-streak', streak + ' ngày');
+  set('nav-progress', cppDone + cfDone + ' / ' + (allTopics.length + allProblems.length) + ' done');
+
+  const g = (group) => {
+    const ts = cppStages.filter(s => s.group === group).flatMap(s => s.topics);
+    return ts.length ? Math.round(ts.filter(t => state.topics[t.id]).length / ts.length * 100) : 0;
+  };
+  ['s1','s2','s3'].forEach((id, i) => {
+    const pct = g(i+1);
+    const bar = document.getElementById('ov-' + id);
+    const pctEl = document.getElementById('ov-' + id + '-pct');
+    if (bar) bar.style.width = pct + '%';
+    if (pctEl) pctEl.textContent = pct + '%';
+  });
+  const cfPct = allProblems.length ? Math.round(cfDone / allProblems.length * 100) : 0;
+  const cfBar = document.getElementById('ov-cf');
+  const cfPctEl = document.getElementById('ov-cf-pct');
+  if (cfBar) cfBar.style.width = cfPct + '%';
+  if (cfPctEl) cfPctEl.textContent = cfPct + '%';
+}
+
+renderCpp();
+renderCf();
+renderDailyGrid();
+updateAll();
+</script>
+</body>
+</html>
